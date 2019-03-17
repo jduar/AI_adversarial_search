@@ -200,15 +200,15 @@ int minimax_decision(BOARD b){
         aux=move(b, i, 1);
         
         if (aux!=NULL){
-            print_board(aux);
+            if (score(aux)==512){
+                return i;
+            }
             s_aux=min_value(aux, depth);
-            printf("%d\n", s_aux);
             if (v<s_aux){
                 v=s_aux;
                 jogada=i;
             }
         }
     }
-    printf("--------------------------------------\n");
     return jogada;
 }

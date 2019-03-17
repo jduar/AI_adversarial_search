@@ -5,7 +5,6 @@
 
 int main(){
     BOARD b = new_board(NULL,0);
-    
     while(TRUE){
         print_board(b);
         int i=-1;
@@ -13,7 +12,11 @@ int main(){
             printf("Coluna: ");
             scanf("%d", &i);    
         }
+        if(move(b,i-1,-1)==NULL){
+            continue;
+        }
         b=move(b,i-1,-1);
+        
         if(score(b)==-512){
             print_board(b);
             printf("Ganhou\n");
