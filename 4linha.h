@@ -6,9 +6,10 @@ typedef enum {FALSE,TRUE} BOOL;
 typedef struct board{
     int* board;
     int depth;
+  char piece; // X or O
 } *BOARD;
 
-BOARD new_board (int* board, int d);
+BOARD new_board (int* board, int d, char piece);
 void print_board(BOARD b);
 BOARD move(BOARD b,int c, int jogada);
 int score(BOARD b);
@@ -16,50 +17,70 @@ int min_value(BOARD b, int depth);
 int max_value(BOARD b, int depth);
 int minimax_decision(BOARD b);
 
-BOARD new_board (int* board, int d){
+
+BOARD new_board (int* board, int d, char piece){
+  /* The board is represented by a matrix, in which
+     1 stands for a bot move, -1 for a player move and
+     0 represents an empty position.
+     piece represents the pieces the player has chosen
+     to play with (X or O).
+  */
     BOARD b = (BOARD) malloc(sizeof(struct board));
     b->board = (int*) malloc(6*7 * sizeof(int));
-    if (board==NULL){
-        for (int i = 0; i<6*7; i++){
-            b->board[i]=0;
+    if (board == NULL){
+        for (int i=0; i<6*7; i++){
+            b->board[i] = 0;
         }
     }
     else{
         for (int i = 0; i<6*7; i++){
-            b->board[i]=board[i];
+            b->board[i] = board[i];
         }
     }
-    b->depth=d;
+    b->depth = d;
+    b->piece = piece;
     return b;
 }
 
 void print_board(BOARD b){
-    for(int i =0; i< 6; i++){
-        for(int j = 0; j < 7; j++){
-            if (b->board[i*7+j]==0){
-                //0 vai ser celula por jogar
-                printf("- ");
+    for(int i=0; i<6; i++){
+        for(int j=0; j<7; j++){
+            if (b->board[i*7+j] == 0){
+	      // 0 is an empty cell.
+	      printf("- ");
             }
-            else if (b->board[i*7+j]==1){
-                // X vai ser inteiro 1
+            else if (b->board[i*7+j] == 1){
+	      // 1 is a cell played by the bot.
+	      // TODO: Improve piece behaviour so a if-else isn't needed.
+	      if (b->piece == 'X') {
+		printf("O ");
+	      }
+	      else {
                 printf("X ");
+	      }
             }
             else{
-                // O vai ser inteiro -1
+	      // -1 is a cell played by the player.
+	      if (b->piece == 'X') {
+		printf("X ");
+	      }
+	      else {
                 printf("O ");
+	      }
             }
         }
         printf("\n");
     }
 }
 
-/* escolher coluna de 0 a 6, e jogada 1 para X e -1 para 0*/
+/* Pick column from 0 to 6. 1 is a bot play, -1 is a user play. */
 BOARD move(BOARD b,int c, int jogada){
-    BOARD aux = new_board(b->board, b->depth);
-    //return 1 se fogada for valida, 0 se for invalida (Exemplo: coluna cheia!)
-    for (int i = 6-1; i>=0; i--){
-        if(aux->board[i*7+c]==0){
-            aux->board[i*7+c]=jogada;
+  BOARD aux = new_board(b->board, b->depth, b->piece);
+    // Returns 1 for a valid move, 0 for an invalid move.
+    // Example: playing in a filled collumn returns an invalid move.
+    for (int i=6-1; i>=0; i--){
+        if(aux->board[i*7+c] == 0){
+            aux->board[i*7+c] = jogada;
             aux->depth++;
             return aux;
         }
@@ -68,85 +89,101 @@ BOARD move(BOARD b,int c, int jogada){
 }
 
 int score(BOARD b){
-    int res=0;
-    int x, o;
+    int res = 0;
+    int bot, player; // Counters for each players' points.
     //linhas
     for(int i=0; i<6;i++){
         for(int j=0; j<4; j++){
-            x=0;
-            o=0;
+            bot = 0;
+            player = 0;
             for(int k=0; k<4; k++){
-                if(b->board[i*7+j+k] ==1){x++;}
-                else if(b->board[i*7+j+k]==-1){o++;}
+                if(b->board[i*7+j+k] == 1){
+		  bot++;
+		}
+                else if(b->board[i*7+j+k] == -1){
+		  player++;
+		}
             }
-            if((x>0 && o>0) || (x==0 && o==0)){continue;}
-            else if(x==1){res+=1;}
-            else if(x==2){res+=10;}
-            else if(x==3){res+=50;}
-            else if(x==4){return 512;}
-            else if(o==1){res-=1;}
-            else if(o==2){res-=10;}
-            else if(o==3){res-=50;}
-            else if(o==4){return -512;}
+            if((bot>0 && player>0) || (bot==0 && player==0)){continue;}
+            else if(bot == 1){res += 1;}
+            else if(bot == 2){res += 10;}
+            else if(bot == 3){res += 50;}
+            else if(bot == 4){return 512;}
+            else if(player == 1){res -= 1;}
+            else if(player == 2){res -= 10;}
+            else if(player == 3){res -= 50;}
+            else if(player == 4){return -512;}
         }
     }
     //colunas
-    for(int i=0; i<7;i++){
+    for(int i=0; i<7; i++){
         for(int j=0; j<3; j++){
-            x=0;
-            o=0;
+            bot = 0;
+            player = 0;
             for(int k=0; k<4; k++){
-                if(b->board[i+(j+k)*7] ==1){x++;}
-                else if(b->board[i+(j+k)*7]==-1){o++;}
+                if(b->board[i+(j+k)*7] == 1){
+		  bot++;
+		}
+                else if(b->board[i+(j+k)*7] == -1){
+		  player++;
+		}
             }
-            if((x>0 && o>0) || (x==0 && o==0)){continue;}
-            else if(x==1){res+=1;}
-            else if(x==2){res+=10;}
-            else if(x==3){res+=50;}
-            else if(x==4){return 512;}
-            else if(o==1){res-=1;}
-            else if(o==2){res-=10;}
-            else if(o==3){res-=50;}
-            else if(o==4){return -512;}
+            if((bot>0 && player>0) || (bot==0 && player==0)){continue;}
+            else if(bot == 1){res += 1;}
+            else if(bot == 2){res += 10;}
+            else if(bot == 3){res += 50;}
+            else if(bot == 4){return 512;}
+            else if(player == 1){res -= 1;}
+            else if(player == 2){res -= 10;}
+            else if(player == 3){res -= 50;}
+            else if(player == 4){return -512;}
         }
     }
     //diagonais
     for(int i=3; i<6; i++){
         for(int j=0; j<4; j++){
-            x=0;
-            o=0;
+            bot = 0;
+            player = 0;
             for(int k=0; k<4; k++){
-                if(b->board[(i-k)*7+j+k] ==1){x++;}
-                else if(b->board[(i-k)*7+j+k]==-1){o++;}
+                if(b->board[(i-k)*7+j+k] == 1){
+		  bot++;
+		}
+                else if(b->board[(i-k)*7+j+k]==-1){
+		  player++;
+		}
             }
-            if((x>0 && o>0) || (x==0 && o==0)){continue;}
-            else if(x==1){res+=1;}
-            else if(x==2){res+=10;}
-            else if(x==3){res+=50;}
-            else if(x==4){return 512;}
-            else if(o==1){res-=1;}
-            else if(o==2){res-=10;}
-            else if(o==3){res-=50;}
-            else if(o==4){return -512;}
+            if((bot > 0 && player > 0) || (bot == 0 && player == 0)){continue;}
+            else if(bot == 1){res += 1;}
+            else if(bot == 2){res += 10;}
+            else if(bot == 3){res += 50;}
+            else if(bot == 4){return 512;}
+            else if(player == 1){res -= 1;}
+            else if(player == 2){res -= 10;}
+            else if(player == 3){res -= 50;}
+            else if(player == 4){return -512;}
         }
     }
     for(int i=3; i<6; i++){
         for(int j=3; j<7; j++){
-            x=0;
-            o=0;
+            bot = 0;
+            player = 0;
             for(int k=0; k<4; k++){
-                if(b->board[(i-k)*7+j-k] ==1){x++;}
-                else if(b->board[(i-k)*7+j-k]==-1){o++;}
+                if(b->board[(i-k)*7+j-k] == 1){
+		  bot++;
+		}
+                else if(b->board[(i-k)*7+j-k] == -1){
+		  player++;
+		}
             }
-            if((x>0 && o>0) || (x==0 && o==0)){continue;}
-            else if(x==1){res+=1;}
-            else if(x==2){res+=10;}
-            else if(x==3){res+=50;}
-            else if(x==4){return 512;}
-            else if(o==1){res-=1;}
-            else if(o==2){res-=10;}
-            else if(o==3){res-=50;}
-            else if(o==4){return -512;}
+            if((bot > 0 && player > 0) || (bot == 0 && player == 0)){continue;}
+            else if(bot == 1){res += 1;}
+            else if(bot == 2){res += 10;}
+            else if(bot == 3){res += 50;}
+            else if(bot == 4){return 512;}
+            else if(player == 1){res -= 1;}
+            else if(player == 2){res -= 10;}
+            else if(player == 3){res -= 50;}
+            else if(player == 4){return -512;}
         }
     }
     
