@@ -12,10 +12,13 @@ typedef struct board{
 BOARD new_board (int* board, int d, char piece);
 void print_board(BOARD b);
 BOARD move(BOARD b,int c, int jogada);
-int score(BOARD b);
+int score(BOARD b, int turn);
 int min_value(BOARD b, int depth);
 int max_value(BOARD b, int depth);
 int minimax_decision(BOARD b);
+int ab_min_value(BOARD b, int depth, int alfa, int beta);
+int ab_max_value(BOARD b, int depth, int alfa, int beta);
+int ab_decision(BOARD b);
 
 
 BOARD new_board (int* board, int d, char piece){
@@ -71,6 +74,7 @@ void print_board(BOARD b){
         }
         printf("\n");
     }
+    printf("1 2 3 4 5 6 7\n");
 }
 
 /* Pick column from 0 to 6. 1 is a bot play, -1 is a user play. */
@@ -88,7 +92,7 @@ BOARD move(BOARD b,int c, int jogada){
     return NULL;
 }
 
-int score(BOARD b){
+int score(BOARD b, int turn){
     int res = 0;
     int bot, player; // Counters for each players' points.
     //linhas
@@ -98,11 +102,11 @@ int score(BOARD b){
             player = 0;
             for(int k=0; k<4; k++){
                 if(b->board[i*7+j+k] == 1){
-		  bot++;
-		}
+		            bot++;
+		        }
                 else if(b->board[i*7+j+k] == -1){
-		  player++;
-		}
+		            player++;
+		        }
             }
             if((bot>0 && player>0) || (bot==0 && player==0)){continue;}
             else if(bot == 1){res += 1;}
@@ -187,14 +191,14 @@ int score(BOARD b){
         }
     }
     
-    return res;
+    return res+(16*turn);
 }
 
 int min_value(BOARD b, int depth){
     BOARD aux;
     int s_aux;
-    int utility = score(b);
-    if (utility>=512 || utility <=-512 || (utility==0 && b->depth>40) || b->depth>depth+5){
+    int utility = score(b, -1);
+    if (utility>=512 || utility <=-512 || (utility==0 && b->depth>40) || b->depth>=depth+7){
         return utility;
     }
     int v=600;
@@ -213,8 +217,8 @@ int min_value(BOARD b, int depth){
 int max_value(BOARD b, int depth){
     BOARD aux;
     int s_aux;
-    int utility = score(b);
-    if (utility>=512 || utility <=-512 || (utility==0 && b->depth>40) || b->depth>depth+5){
+    int utility = score(b, 1);
+    if (utility>=512 || utility <=-512 || (utility==0 && b->depth>40) || b->depth>=depth+7){
         return utility;
     }
     int v=-600;
@@ -237,14 +241,76 @@ int minimax_decision(BOARD b){
         aux=move(b, i, 1);
         
         if (aux!=NULL){
-            if (score(aux)==512){
+            /*if (score(aux)==512){
                 return i;
-            }
+            }*/
             s_aux=min_value(aux, depth);
             if (v<s_aux){
                 v=s_aux;
                 jogada=i;
             }
+        }
+    }
+    return jogada;
+}
+
+
+int ab_min_value(BOARD b, int depth, int alfa, int beta){
+    BOARD aux;
+    int s_aux;
+    int utility = score(b,-1);
+    if (utility>=512 || utility <=-512 || (utility==0 && b->depth>40) || b->depth>=depth+8){
+        return utility;
+    }
+    int v=600;
+    for (int i=0; i<7; i++){
+        aux=move(b, i, -1);
+        if (aux!=NULL){
+            s_aux=ab_max_value(aux, depth, alfa, beta);
+            if (v>s_aux){v=s_aux;}
+            if (v<=alfa){return v;}
+            if (beta>v){beta=v;}
+        }
+    }
+    return v;
+}
+
+int ab_max_value(BOARD b, int depth, int alfa, int beta){
+    BOARD aux;
+    int s_aux;
+    int utility = score(b, 1);
+    if (utility>=512 || utility <=-512 || (utility==0 && b->depth>40) || b->depth>=depth+8){
+        return utility;
+    }
+    int v=-600;
+    for (int i=0; i<7; i++){
+        aux=move(b, i, 1);
+        if (aux!=NULL){
+            s_aux=ab_min_value(aux, depth, alfa, beta);
+            if (v<s_aux){v=s_aux;}
+            if (v>=beta){return v;}
+            if(alfa<v){alfa=v;}
+        }
+    }
+    
+    return v;
+}
+
+int ab_decision(BOARD b){
+    int v=-600, s_aux, jogada, depth=b->depth;
+    int alfa=-600, beta=600;
+    BOARD aux;
+    for (int i=0; i<7; i++){
+        aux=move(b, i, 1);
+        
+        if (aux!=NULL){
+            s_aux=ab_min_value(aux, depth, alfa, beta);
+            if (v<s_aux){
+                v=s_aux;
+                jogada=i;
+            }
+            if (v>=beta){return i;}
+            if(alfa<v){alfa=v;}
         }
     }
     return jogada;
