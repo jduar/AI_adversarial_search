@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/* Header guard: previne includes repetidos. */
+#ifndef MATRIX_H
+#define MATRIX_H
+
 typedef enum {FALSE,TRUE} BOOL;
 
 typedef struct board{
@@ -315,3 +319,5 @@ int ab_decision(BOARD b){
     }
     return jogada;
 }
+
+#endif

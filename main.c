@@ -1,7 +1,9 @@
-#include <stdio.h>
-#include <stdlib.h>
+//#include <stdio.h>
+//#include <stdlib.h>
 
 #include "4linha.h"
+#include "minmax.h"
+#include "alphabeta.h"
 
 char piece() {
   /* Function to have the player pick the piece he wants to play with [X/O].*/
@@ -21,7 +23,7 @@ char piece() {
 
 
 int main(){
-  int algorithm, first=-1;
+  int algorithm;
   printf("* Let's play Connect Four!\n");
   printf("**************************\n");
 
@@ -31,80 +33,14 @@ int main(){
   scanf(" %d", &algorithm);
 
   if (algorithm == 1) {
-    /* The player picked the MinMax algorithm. */
-  
-    BOARD b = new_board(NULL, 0, piece());
-    printf("Who Will be Playing first? (1 for PC, 0 for Player)\n");
-    scanf("%d", &first);
-    while(!(first==0 || first==1)){
-      printf("Who Will be Playing first? (1 for PC, 0 for Player)\n");
-      scanf("%d", &first);
-    }
-    if(first){
-      b = move(b, minimax_decision(b), 1);
-    }
-    while(TRUE){
-      print_board(b);
-      int i = -1;
-      while(i<1 || i>7){
-        printf("Coluna: ");
-        scanf("%d", &i);    
-      }
-      if(move(b, i-1, -1) == NULL){
-	      continue;
-      }
-      b = move(b, i-1, -1);
-        
-      if(score(b, -1) == -512){
-        print_board(b);
-        printf("Ganhou\n");
-        return 1;
-      }
-      b = move(b, minimax_decision(b), 1);
-      if(score(b, 1) == 512){
-        print_board(b);
-        printf("Perdeu\n");
-        return 1;
-      }
-    }
-    return 0;
+      /* The player picked the MinMax algorithm. */
+      BOARD b = new_board(NULL, 0, piece());
+      minmax(b);
   }
   if (algorithm == 2) {
-    BOARD b = new_board(NULL, 0, piece());
-    printf("Who Will be Playing first? (1 for PC, 0 for Player)\n");
-    scanf("%d", &first);
-    while(!(first==0 || first==1)){
-      printf("Who Will be Playing first? (1 for PC, 0 for Player)\n");
-      scanf("%d", &first);
-    }
-    if(first){
-      b = move(b, ab_decision(b), 1);
-    }
-    while(TRUE){
-      print_board(b);
-      int i = -1;
-      while(i<1 || i>7){
-        printf("Coluna: ");
-        scanf("%d", &i);    
-      }
-      if(move(b, i-1, -1) == NULL){
-	      continue;
-      }
-      b = move(b, i-1, -1);
-        
-      if(score(b, -1) == -512){
-        print_board(b);
-        printf("Ganhou\n");
-        return 1;
-      }
-      b = move(b, ab_decision(b), 1);
-      if(score(b, 1) == 512){
-        print_board(b);
-        printf("Perdeu\n");
-        return 1;
-      }
-    }
-    return 0;
+      /* The player picked the Alpha-beta algorithm. */
+      BOARD b = new_board(NULL, 0, piece());
+      alphabeta(b);
   }
 
   if (algorithm == 3) {
