@@ -10,7 +10,7 @@ typedef struct node {
     struct node *parent;
     struct node *children[7];
     
-    BOARD b;
+    BOARD board;
     double ucb;
     int visits;
 } *NODE;
@@ -61,7 +61,7 @@ void destroy_subtree(NODE node);
 /* NODE FUNCTIONS */
 NODE create_node(BOARD b, NODE parent) {
     NODE node = malloc(sizeof(struct node));
-    node->b = b;
+    node->board = b;
     node->ucb = 0;
     node->visits = 0;
     node->parent = parent;
@@ -73,7 +73,7 @@ NODE create_node(BOARD b, NODE parent) {
 }
 
 BOARD node_get_board(NODE node) {
-    return node->b;
+    return node->board;
 }
 
 double node_get_ucb(NODE node) {
@@ -119,7 +119,7 @@ NODE tree_get_root(TREE tree) {
 
 void add_child(NODE node, NODE child) {
     for (int i=0; i<7; i++) {
-	if (node->children[i] != NULL) {
+	if (node->children[i] == NULL) {
 	    node->children[i] = child;
 	    node->children[i]->parent = node;
 	    break;
