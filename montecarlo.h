@@ -125,5 +125,5 @@ int montecarlo(BOARD b) {
     node_set_visits(new_child, node_get_visits(new_child) + 1);
 
     int value = rollout(new_child);
-    printf("%d\n");
+    
 }
