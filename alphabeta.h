@@ -2,6 +2,10 @@
 
 #include "4linha.h"
 
+
+/**
+ * Choses who will be playing first, and implements the Alpha_Beta algorithm
+ * */
 int alphabeta(BOARD b) {
     int first = -1;
     /* Deciding who moves first. */

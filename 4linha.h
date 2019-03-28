@@ -10,7 +10,7 @@ typedef enum {FALSE,TRUE} BOOL;
 typedef struct board{
     int* board;
     int depth;
-  char piece; // X or O
+    char piece; // X or O
 } *BOARD;
 
 BOARD new_board (int* board, int d, char piece);
@@ -60,10 +60,10 @@ void print_board(BOARD b){
 	      // 1 is a cell played by the bot.
 	      // TODO: Improve piece behaviour so a if-else isn't needed.
 	      if (b->piece == 'X') {
-		printf("O ");
+		    printf("O ");
 	      }
 	      else {
-                printf("X ");
+            printf("X ");
 	      }
             }
             else{
@@ -78,7 +78,7 @@ void print_board(BOARD b){
         }
         printf("\n");
     }
-    printf("1 2 3 4 5 6 7\n");
+    printf("1 2 3 4 5 6 7\n\n");
 }
 
 /* Pick column from 0 to 6. 1 is a bot play, -1 is a user play. */
@@ -97,6 +97,13 @@ BOARD move(BOARD b,int c, int player){
 }
 
 int score(BOARD b, int turn){
+    /*
+    * output is a number, ranged [-512,512], in wich 0 is a draw, 512 is 
+    * a victory for the bot, and -512 is a victory for the player
+    * if output is diferent than those 3 numbers, then it gives the score
+    * of the board, where no player has the win, and its still possible
+    * for one of them to win
+    */
     int res = 0;
     int bot, player; // Counters for each players' points.
     //linhas
@@ -238,6 +245,10 @@ int max_value(BOARD b, int depth){
     return v;
 }
 
+/**
+ * The first function to be called if minimax is to be implemented
+ * It chooses the column to play
+ */
 int minimax_decision(BOARD b){
     int v=-600, s_aux, decision, depth=b->depth;
     BOARD aux;
@@ -300,6 +311,10 @@ int ab_max_value(BOARD b, int depth, int alfa, int beta){
     return v;
 }
 
+/**
+ * The first function to be called if alpha_beta is to be implemented
+ * It chooses the column to play
+ */
 int ab_decision(BOARD b){
     int v=-600, s_aux, decision, depth=b->depth;
     int alfa=-600, beta=600;
