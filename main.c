@@ -35,24 +35,26 @@ int main(){
   printf(" 1 - MinMax\n 2 - Alpha-beta\n 3 - Monte Carlo\n");
   scanf(" %d", &algorithm);
 
+  while (!(algorithm == 1 || algorithm == 2 || algorithm == 3 || algorithm == 4)) {
+      printf("* Wrong choice! The only algorithm choices are 1, 2 or 3.\n");
+      scanf(" %d", &algorithm);
+    }
   if (algorithm == 1) {
       /* The player picked the MinMax algorithm. */
       BOARD b = new_board(NULL, 0, piece());
       minmax(b);
   }
-  if (algorithm == 2) {
+  else if (algorithm == 2) {
       /* The player picked the Alpha-beta algorithm. */
       BOARD b = new_board(NULL, 0, piece());
       alphabeta(b);
   }
 
-  if (algorithm == 3) {
+  else if (algorithm == 3) {
 
   }
-  else {
-    while (!(algorithm == 1 || algorithm == 2 || algorithm == 3)) {
-      printf("* Wrong choice! The only algorithm choices are 1, 2 or 3.\n");
-      scanf(" %d", &algorithm);
-    }
+
+  else if (algorithm == 4){
+      min_vs_alpha();
   }
 }
