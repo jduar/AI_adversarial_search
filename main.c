@@ -1,6 +1,9 @@
 //#include <stdio.h>
 //#include <stdlib.h>
 
+#include "btree.h"
+#include "ntree.h"
+
 #include "4linha.h"
 #include "minmax.h"
 #include "alphabeta.h"
