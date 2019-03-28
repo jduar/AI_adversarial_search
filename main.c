@@ -1,12 +1,12 @@
-//#include <stdio.h>
-//#include <stdlib.h>
-
-#include "btree.h"
-#include "ntree.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <time.h>
 
 #include "4linha.h"
 #include "minmax.h"
 #include "alphabeta.h"
+
 
 char piece() {
   /* Function to have the player pick the piece he wants to play with [X/O].*/

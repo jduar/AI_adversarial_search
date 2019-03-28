@@ -1,5 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
+
+//Node counter 
+int nodes_counter;
 
 /* Header guard: previne includes repetidos. */
 #ifndef MATRIX_H
@@ -90,6 +94,7 @@ BOARD move(BOARD b,int c, int player){
         if(aux->board[i*7+c] == 0){
             aux->board[i*7+c] = player;
             aux->depth++;
+            nodes_counter++;
             return aux;
         }
     }
@@ -250,6 +255,10 @@ int max_value(BOARD b, int depth){
  * It chooses the column to play
  */
 int minimax_decision(BOARD b){
+    //starting time
+    clock_t start=clock();
+    //Node counter
+    nodes_counter=0;
     int v=-600, s_aux, decision, depth=b->depth;
     BOARD aux;
     for (int i=0; i<7; i++){
@@ -266,6 +275,11 @@ int minimax_decision(BOARD b){
             }
         }
     }
+    //ending time
+    clock_t end=clock();
+    double time=(double)(end-start)/CLOCKS_PER_SEC;
+    printf("Execution time of the decision: %f\n ", time);
+    printf("Nodes generated: %d\n", nodes_counter);
     return decision;
 }
 
@@ -316,6 +330,10 @@ int ab_max_value(BOARD b, int depth, int alfa, int beta){
  * It chooses the column to play
  */
 int ab_decision(BOARD b){
+    //starting time
+    clock_t start=clock();
+    //Nodes counter
+    nodes_counter=0;
     int v=-600, s_aux, decision, depth=b->depth;
     int alfa=-600, beta=600;
     BOARD aux;
@@ -332,6 +350,11 @@ int ab_decision(BOARD b){
             if(alfa<v){alfa=v;}
         }
     }
+    //ending time
+    clock_t end=clock();
+    double time=(double)(end-start)/CLOCKS_PER_SEC;
+    printf("Execution time of the decision: %f\n ", time);
+    printf("Nodes generated: %d\n", nodes_counter);
     return decision;
 }
 
