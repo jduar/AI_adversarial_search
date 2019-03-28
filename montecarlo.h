@@ -4,12 +4,21 @@
 
 #define UCBCONSTANT 1
 
-double child_reward_sum(NODE node) {
-    double sum = 0;
+int random_number() {      
+   /*
+   for (int i=0; i<100; i++) {
+       printf("%d\n", rand() % 7);
+       } */
+   
+   return(rand() % 7);
+}
+
+int child_reward_sum(NODE node) {
+    int sum = 0;
     for (int i=0; i<7; i++) {
 	if (node->children[i] != NULL) {
 	    sum = sum +
-		node_get_ucb(node->children[i]) +
+		node_get_reward(node->children[i]) +
 		child_reward_sum(node->children[i]);
 	}
     }
@@ -27,8 +36,9 @@ NODE select_best(NODE node) {
     NODE best;
     for (int i=0; i<7; i++) {
 	if (node->children[i] != NULL) {
-	    if (node_get_ucb(node->children[i]) > max) {
-		max = node_get_ucb(node->children[i]);
+	    double temp = ucb(node);
+	    if (temp > max) {
+		max = temp;
 		best = node->children[i];
 	    }
 	}
@@ -39,14 +49,58 @@ NODE select_best(NODE node) {
 NODE expand_node(NODE node) {
     for (int i=0; i<7; i++) {
 	if (node->children[i] == NULL) {
-	    NODE new = create_node(move(node_get_board(node), 0, 1), node);
+	    NODE new = create_node(move(node_get_board(node), random_number(), 1), node);
 	    add_child(node, new);
 	    return new;
 	}
     }
 }
 
+int rollout(NODE node) {
+    int last_player = 1;
+    BOARD b;
+    int counter = 0;
+    while (counter < 10000) {
+	counter++;
+	if (last_player == 1) {
+	    int column = random_number();
+	    if(move(b, column, -1) == NULL){
+		continue;
+	    }
+	    b = move(b, column, -1);
+	    last_player = -1;
+	    if(score(b, -1) == -512) {
+		return 1;
+	    }
+	    /*
+	    if(score(b, 1) == 512) {
+		return 0;
+		}*/
+	}
+	else if (last_player == -1) {
+	    int column = random_number();
+	    if(move(b, column, 1) == NULL){
+		continue;
+	    }
+	    b = move(b, column, 1);
+	    last_player = 1;
+	    /*
+	    if(score(b, -1) == -512) {
+		return 1;
+		}*/
+	    if(score(b, 1) == 512) {
+		return 0;
+	    }
+	}
+    }
+    return 0;
+}
+
 int montecarlo(BOARD b) {
+    /* Intializes random number generator */
+    time_t t;
+    srand((unsigned) time(&t));
+    
     TREE tree = create_tree();
     NODE root = create_node(b, NULL);
     tree_set_root(tree, root);
@@ -58,9 +112,10 @@ int montecarlo(BOARD b) {
 	cur = select_best(cur);
 	node_set_visits(cur, node_get_visits(cur) + 1);
     }
-
-    NODE new_child = expand(node);
+    
+    NODE new_child = expand_node(cur);
     node_set_visits(new_child, node_get_visits(new_child) + 1);
 
-    
+    int value = rollout(new_child);
+    printf("%d\n");
 }
