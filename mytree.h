@@ -11,7 +11,7 @@ typedef struct node {
     struct node *children[7];
     
     BOARD board;
-    double ucb;
+    int reward;
     int visits;
 } *NODE;
 
@@ -27,10 +27,10 @@ NODE create_node(BOARD b, NODE parent);
 BOARD node_get_board(NODE node);
 
 /* Returns a node's UCB. */
-double node_get_ucb(NODE node);
+int node_get_reward(NODE node);
 
-/* Sets the node's UCB. */
-void node_set_ucb(NODE node, double ucb);
+/* Sets the node's reward. */
+void node_set_reward(NODE node, int reward);
 
 /* Returns the number of times a node's been visited. */
 int node_get_visits(NODE node);
@@ -62,7 +62,7 @@ void destroy_subtree(NODE node);
 NODE create_node(BOARD b, NODE parent) {
     NODE node = malloc(sizeof(struct node));
     node->board = b;
-    node->ucb = 0;
+    node->reward = 0;
     node->visits = 0;
     node->parent = parent;
     for (int i=0; i<7; i++) {
@@ -76,12 +76,12 @@ BOARD node_get_board(NODE node) {
     return node->board;
 }
 
-double node_get_ucb(NODE node) {
-    return node->ucb;
+int node_get_reward(NODE node) {
+    return node->reward;
 }
 
-void node_set_ucb(NODE node, double ucb) {
-    node->ucb = ucb;
+void node_set_reward(NODE node, int reward) {
+    node->reward = reward;
 }
 
 int node_get_visits(NODE node) {
@@ -94,7 +94,7 @@ void node_set_visits(NODE node, int visits) {
 
 int node_is_leaf(NODE node) {
     for (int i=0; i<7; i++) {
-	if (node->children[i] == NULL) {
+	if (node->children[i] != NULL) {
 	    return 0;
 	}
     }
