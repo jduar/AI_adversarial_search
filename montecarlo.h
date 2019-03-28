@@ -57,16 +57,21 @@ NODE expand_node(NODE node) {
 }
 
 int rollout(NODE node) {
+    /* Should return 1 for a player win and 0 for a computer
+       win or a draw. */
     int last_player = 1;
     BOARD b;
     int counter = 0;
     while (counter < 10000) {
 	counter++;
+	/* The last move was made by the computer.
+	   It's now the player's turn. */
 	if (last_player == 1) {
 	    int column = random_number();
 	    if(move(b, column, -1) == NULL){
 		continue;
 	    }
+	    /* Making a move and changing player. */
 	    b = move(b, column, -1);
 	    last_player = -1;
 	    if(score(b, -1) == -512) {
@@ -77,11 +82,14 @@ int rollout(NODE node) {
 		return 0;
 		}*/
 	}
+	/* The last move was made by the player.
+	   It's now the computer's turn. */
 	else if (last_player == -1) {
 	    int column = random_number();
 	    if(move(b, column, 1) == NULL){
 		continue;
 	    }
+	    /* Making a move and changing player. */
 	    b = move(b, column, 1);
 	    last_player = 1;
 	    /*
