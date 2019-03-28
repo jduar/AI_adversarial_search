@@ -15,7 +15,7 @@ typedef struct board{
 
 BOARD new_board (int* board, int d, char piece);
 void print_board(BOARD b);
-BOARD move(BOARD b,int c, int jogada);
+BOARD move(BOARD b,int c, int player);
 int score(BOARD b, int turn);
 int min_value(BOARD b, int depth);
 int max_value(BOARD b, int depth);
@@ -82,13 +82,13 @@ void print_board(BOARD b){
 }
 
 /* Pick column from 0 to 6. 1 is a bot play, -1 is a user play. */
-BOARD move(BOARD b,int c, int jogada){
+BOARD move(BOARD b,int c, int player){
   BOARD aux = new_board(b->board, b->depth, b->piece);
     // Returns 1 for a valid move, 0 for an invalid move.
     // Example: playing in a filled collumn returns an invalid move.
     for (int i=6-1; i>=0; i--){
         if(aux->board[i*7+c] == 0){
-            aux->board[i*7+c] = jogada;
+            aux->board[i*7+c] = player;
             aux->depth++;
             return aux;
         }
@@ -239,7 +239,7 @@ int max_value(BOARD b, int depth){
 }
 
 int minimax_decision(BOARD b){
-    int v=-600, s_aux, jogada, depth=b->depth;
+    int v=-600, s_aux, decision, depth=b->depth;
     BOARD aux;
     for (int i=0; i<7; i++){
         aux=move(b, i, 1);
@@ -251,11 +251,11 @@ int minimax_decision(BOARD b){
             s_aux=min_value(aux, depth);
             if (v<s_aux){
                 v=s_aux;
-                jogada=i;
+                decision=i;
             }
         }
     }
-    return jogada;
+    return decision;
 }
 
 
@@ -301,7 +301,7 @@ int ab_max_value(BOARD b, int depth, int alfa, int beta){
 }
 
 int ab_decision(BOARD b){
-    int v=-600, s_aux, jogada, depth=b->depth;
+    int v=-600, s_aux, decision, depth=b->depth;
     int alfa=-600, beta=600;
     BOARD aux;
     for (int i=0; i<7; i++){
@@ -311,13 +311,13 @@ int ab_decision(BOARD b){
             s_aux=ab_min_value(aux, depth, alfa, beta);
             if (v<s_aux){
                 v=s_aux;
-                jogada=i;
+                decision=i;
             }
             if (v>=beta){return i;}
             if(alfa<v){alfa=v;}
         }
     }
-    return jogada;
+    return decision;
 }
 
 #endif
