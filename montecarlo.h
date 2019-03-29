@@ -75,7 +75,7 @@ int rollout(NODE node) {
     int last_player = 1;
     BOARD b = node->board;
     int counter = 0;
-    while (counter < 10000) {
+    while (counter < 1000) {
 	counter++;
 	/* The last move was made by the computer.
 	   It's now the player's turn. */
@@ -125,7 +125,7 @@ void backpropagate(NODE node, int value, TREE tree) {
     }
 }
 
-int montecarlo(BOARD b) {
+BOARD montecarlo(BOARD b) {
     /* Intializes random number generator */
     time_t t;
     srand((unsigned) time(&t));
@@ -134,7 +134,7 @@ int montecarlo(BOARD b) {
     NODE root = create_node(b, NULL);
     tree_set_root(tree, root);
 
-    for (int i=0; i<100; i++) {
+    for (int i=0; i<10; i++) {
 	NODE cur = tree_get_root(tree);
 
 	while (node_is_leaf(cur) == 0) {
@@ -148,9 +148,10 @@ int montecarlo(BOARD b) {
 	int value = rollout(new_child);
 	backpropagate(new_child, value, tree);
     }
+    return select_best(root)->board;
 }
 
-int game() {
+int game(BOARD b) {
     int first = -1;
     /* Deciding who moves first. */
     printf("Who will be playing first? (1 for PC, 0 for player)\n");
@@ -160,7 +161,7 @@ int game() {
 	scanf("%d", &first);
     }
     if(first){
-	b = 
+	b = montecarlo(b);
     }
 
     while(TRUE){
@@ -181,7 +182,7 @@ int game() {
 	    printf("Ganhou!\n");
 	    return 1;
 	}
-	b = 
+	b = montecarlo(b);
 	if(score(b, 1) == 512){
 	    print_board(b);
 	    printf("**************************\n");
