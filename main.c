@@ -2,10 +2,12 @@
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
+#include <assert.h> // For bug testing.
 
 #include "4linha.h"
 #include "minmax.h"
 #include "alphabeta.h"
+#include "montecarlo.h"
 
 
 char piece() {
@@ -51,7 +53,9 @@ int main(){
   }
 
   else if (algorithm == 3) {
-
+      /* The player picked the Monte-Carlo algorithm. */
+      BOARD b = new_board(NULL, 0, piece());
+      mc_game_loop(b);
   }
 
   else if (algorithm == 4){

@@ -56,9 +56,16 @@ void add_child(NODE node, NODE child);
 /* Destroys a subtree. */
 void destroy_subtree(NODE node);
 
-/* IMPLEMENTATION */
+/* Destroys a tree. */
+void destroy_tree(TREE tree);
 
-/* NODE FUNCTIONS */
+/*
+IMPLEMENTATION
+*/
+
+/*
+NODE FUNCTIONS
+*/
 NODE create_node(BOARD b, NODE parent) {
     NODE node = malloc(sizeof(struct node));
     node->board = b;
@@ -101,8 +108,9 @@ int node_is_leaf(NODE node) {
     return 1;
 }
 
-/* TREE FUNCTIONS */
-/* Create tree. */
+/*
+TREE FUNCTIONS
+*/
 TREE create_tree() {
     TREE tree = malloc(sizeof(TREE));
     tree->root = NULL;
@@ -134,6 +142,11 @@ void destroy_subtree(NODE node) {
 	}
     }
     free(node);
+}
+
+void destroy_tree(TREE tree) {
+    destroy_subtree(tree_get_root(tree));
+    free(tree);
 }
 
 #endif
