@@ -1,15 +1,13 @@
+/* Monte-Carlo implementation */
+
 #include <math.h>
 
 #include "mytree.h"
 
+/* Constant present on UCB's calculation. */
 #define UCBCONSTANT 1
 
 int random_number() {      
-   /*
-   for (int i=0; i<100; i++) {
-       printf("%d\n", rand() % 7);
-       } */
-   
    return(rand() % 7);
 }
 
@@ -67,6 +65,7 @@ NODE expand_node(NODE node) {
 	    return new;
 	}
     }
+    return NULL;
 }
 
 int rollout(NODE node) {
@@ -91,10 +90,6 @@ int rollout(NODE node) {
 	    if(score(b, -1) == -512) {
 		return 1;
 	    }
-	    /*
-	    if(score(b, 1) == 512) {
-		return 0;
-		}*/
 	}
 	/* The last move was made by the player.
 	   It's now the computer's turn. */
@@ -106,10 +101,6 @@ int rollout(NODE node) {
 	    /* Making a move and changing player. */
 	    b = move(b, column, 1);
 	    last_player = 1;
-	    /*
-	    if(score(b, -1) == -512) {
-		return 1;
-		}*/
 	    if(score(b, 1) == 512) {
 		return 0;
 	    }
@@ -134,7 +125,7 @@ BOARD montecarlo(BOARD b) {
     NODE root = create_node(b, NULL);
     tree_set_root(tree, root);
 
-    for (int i=0; i<10; i++) {
+    for (int i=0; i<30; i++) {
 	NODE cur = tree_get_root(tree);
 
 	while (node_is_leaf(cur) == 0) {
@@ -148,23 +139,29 @@ BOARD montecarlo(BOARD b) {
 	int value = rollout(new_child);
 	backpropagate(new_child, value, tree);
     }
-    return select_best(root)->board;
+    b = select_best(root)->board;
+    printf("eeheheheehh\n");
+    print_board(b);
+    destroy_tree(tree);
+    return b;
 }
 
-int game(BOARD b) {
-    int first = -1;
+int mc_game_loop(BOARD b) {
     /* Deciding who moves first. */
+    int first = -1;
     printf("Who will be playing first? (1 for PC, 0 for player)\n");
     scanf("%d", &first);
-    while(!(first == 0 || first == 1)){
+    while (!(first == 0 || first == 1)) {
 	printf("Who will be playing first? (1 for PC, 0 for player)\n");
 	scanf("%d", &first);
     }
-    if(first){
+
+    /* Starting the game loop. */
+    if (first == 1) {
 	b = montecarlo(b);
     }
-
-    while(TRUE){
+    
+    while (TRUE) {
 	print_board(b);
 	int i = -1;
 	while(i<1 || i>7){
