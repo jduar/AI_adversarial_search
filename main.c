@@ -7,7 +7,7 @@
 #include "4linha.h"
 #include "minmax.h"
 #include "alphabeta.h"
-#include "montecarlo.h"
+#include "monte_carlo.h"
 
 
 char piece() {
