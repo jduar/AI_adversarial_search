@@ -1,33 +1,48 @@
-# IA-Segundo Trabalho
+# Artificial Intelligence Second Assignment - Adversarial Search
 
-# 4 em Linha
+## Connect Four
 
-## Versão do compilador:
+The goal of this assignment was to create a bot that was capable of playing the Connect Four game while implementing the minimax, alpha-beta pruning and Monte Carlo Tree Search algorithms.
+
+This was one of four assignments required by the Artificial Intelligence course in the Computer Science degree of the Faculty of Sciences of the University of Porto.
+
+Authors:
+* Ana Dias (github.com/Ana365Dias)
+* João Duarte (github.com/jsilduarte)
+* João Neves (github.com/jbfneves)
+
+Commit 07d18f1a5e57a33fd5b41644d35057f2a6272a04 contains the version of the code at the time of delivery. Further changes can, and will, eventually, be made to:
+* Clean up the code
+* Improve the MCTS algorithm which barely works as it's intended
+* Provide visualization of performance differences between the different methods
+
+## Compiler version:
 gcc (GCC) 8.2.1
 
-## Compilação e execução
+## Compiling and executing
 
 $ make
 
 $ ./main
 
+## File description
 
-## Descrição dos ficheiros
+* Main files
 
-* Ficheiros principais
+main.c - main file
 
-main.c - ficheiro principal
+4linha.h - board structures and methods
 
-4linha.h - estruturas e métodos do tabuleiro
+minmax.h - minimax
 
-minmax.h - algoritmo minimax
+alphabeta.h - alpha-beta pruning
 
-alphabeta.h - algoritmo alpha-beta
+monte_carlo.h - MCTS
 
-monte_carlo.h - algoritmo monte-carlo
+montecarlo.h - non functioning attempt to implement MCTS
 
 Makefile
 
-* Estruturas utilizadas
+* Structures
 
-mytree.h
+mytree.h - a basic tree implementation for this specific project
